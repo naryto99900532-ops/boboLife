@@ -151,3 +151,64 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         submitBtn.disabled = false
     }
 })
+// ВХОД - ИСПРАВЛЕННЫЙ
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    
+    const login = document.getElementById('loginEmail').value
+    const password = document.getElementById('loginPassword').value
+    
+    // Показываем загрузку
+    const submitBtn = e.target.querySelector('button[type="submit"]')
+    const originalText = submitBtn.textContent
+    submitBtn.textContent = 'Вход...'
+    submitBtn.disabled = true
+    
+    try {
+        console.log('Пытаемся войти как:', login)
+        
+        // Пробуем как email
+        let { data, error } = await supabase.auth.signInWithPassword({
+            email: login,
+            password: password
+        })
+        
+        // Если ошибка, пробуем найти username
+        if (error && error.message.includes('Invalid login credentials')) {
+            console.log('Пробуем найти по username:', login)
+            
+            // Здесь нужно искать username в своей таблице users
+            // Но для теста просто пробуем как email еще раз
+            throw new Error('Неверные данные для входа')
+        }
+        
+        if (error) throw error
+        
+        console.log('Вход успешен:', data)
+        
+        // Сохраняем пользователя
+        localStorage.setItem('user', JSON.stringify({
+            id: data.user.id,
+            email: data.user.email,
+            role: data.user.user_metadata?.role || 'user'
+        }))
+        
+        // Переходим на dashboard
+        window.location.href = 'dashboard.html'
+        
+    } catch (error) {
+        console.error('Ошибка входа:', error)
+        alert('Ошибка входа: ' + error.message)
+        
+        // Предлагаем зарегистрироваться
+        if (error.message.includes('Invalid login credentials')) {
+            if (confirm('Пользователь не найден. Хотите зарегистрироваться?')) {
+                document.querySelector('.auth-tab[data-tab="register"]').click()
+            }
+        }
+    } finally {
+        // Восстанавливаем кнопку
+        submitBtn.textContent = originalText
+        submitBtn.disabled = false
+    }
+})
