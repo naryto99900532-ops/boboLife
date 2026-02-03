@@ -1,116 +1,28 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bobix Corporation - Панель управления</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Russo+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Dashboard</title>
 </head>
 <body>
-    <!-- Фон с сеткой -->
-    <div class="grid-bg"></div>
+    <h1>Dashboard</h1>
+    <p>Если видишь эту страницу - вход работал!</p>
+    <button onclick="logout()">Выйти</button>
     
-    <!-- Шапка сайта -->
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <i class="fas fa-crown logo-icon"></i>
-                <div class="logo-text">BOBIX <span>CORPORATION</span></div>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.html"><i class="fas fa-home"></i> На главную</a></li>
-                    <li><a href="#" id="clan-players-btn"><i class="fas fa-users"></i> Clan Players</a></li>
-                    <li><a href="#" id="top-of-clan-btn"><i class="fas fa-trophy"></i> Top Of Clan</a></li>
-                    <li><a href="#" id="admin-panel-btn" style="display: none;"><i class="fas fa-cog"></i> Admin Panel</a></li>
-                    <li><a href="#" id="owner-panel-btn" style="display: none;"><i class="fas fa-crown"></i> Owner Panel</a></li>
-                    <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <main class="container">
-        <section id="clan-players-section" class="section-content" style="display: none;">
-            <h2 class="section-title">Clan Players</h2>
-            <div id="players-list">
-                <!-- Список игроков будет здесь -->
-            </div>
-            <button id="add-player-btn" class="btn" style="margin-top: 2rem;">Добавить игрока</button>
-        </section>
-
-        <section id="top-of-clan-section" class="section-content" style="display: none;">
-            <h2 class="section-title">Top Of Clan</h2>
-            <div id="top-players-list">
-                <!-- Топ игроков будет здесь -->
-            </div>
-        </section>
-
-        <section id="admin-panel-section" class="section-content" style="display: none;">
-            <h2 class="section-title">Admin Panel</h2>
-            <div class="admin-actions">
-                <h3>Управление игроками</h3>
-                <div id="admin-players-list">
-                    <!-- Список игроков для админа с возможностью редактирования -->
-                </div>
-            </div>
-        </section>
-
-        <section id="owner-panel-section" class="section-content" style="display: none;">
-            <h2 class="section-title">Owner Panel</h2>
-            <div class="owner-actions">
-                <h3>Управление администраторами</h3>
-                <div id="admins-list">
-                    <!-- Список администраторов -->
-                </div>
-                <h3>Назначение администратора</h3>
-                <form id="assign-admin-form">
-                    <div class="form-group">
-                        <label for="user-email">Email пользователя</label>
-                        <input type="email" id="user-email" required>
-                    </div>
-                    <button type="submit" class="btn">Назначить администратором</button>
-                </form>
-            </div>
-        </section>
-    </main>
-
-    <!-- Модальное окно для добавления/редактирования игрока -->
-    <div id="player-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2 id="player-modal-title">Добавить игрока</h2>
-            <form id="player-form">
-                <div class="form-group">
-                    <label for="player-name">Имя</label>
-                    <input type="text" id="player-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="player-title">Титул</label>
-                    <input type="text" id="player-title">
-                </div>
-                <div class="form-group">
-                    <label for="player-description">Описание</label>
-                    <textarea id="player-description" rows="4"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="player-rank">Ранг (для топа, чем меньше число, тем выше)</label>
-                    <input type="number" id="player-rank" min="1" value="10">
-                </div>
-                <div class="form-group">
-                    <label>Пороги (нажмите чтобы добавить)</label>
-                    <div id="thresholds-container">
-                        <!-- Пороги будут добавляться динамически -->
-                    </div>
-                    <button type="button" id="add-threshold-btn" class="btn-small">Добавить порог</button>
-                </div>
-                <button type="submit" class="btn">Сохранить</button>
-            </form>
-        </div>
-    </div>
-
-    <script type="module" src="dashboard.js"></script>
+    <script>
+        // Проверка авторизации
+        const user = JSON.parse(localStorage.getItem('supabase_user'))
+        if (!user) {
+            alert('Не авторизован!')
+            window.location.href = 'index.html'
+        } else {
+            document.body.innerHTML += `<p>Вы вошли как: ${user.email}</p>`
+        }
+        
+        function logout() {
+            localStorage.removeItem('supabase_user')
+            localStorage.removeItem('supabase_session')
+            window.location.href = 'index.html'
+        }
+    </script>
 </body>
 </html>
